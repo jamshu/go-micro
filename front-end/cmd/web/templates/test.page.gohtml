@@ -6,7 +6,7 @@
             <div class="col">
                 <h1 class="mt-5">Test microservices</h1>
                 <hr>
-
+                <button id="brokerBtn" class="btn btn-outline-secondary">Test Broker</button>
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
                 </div>
@@ -31,6 +31,32 @@
 
 {{define "js"}}
     <script>
-        
+
+        const brokerBtn = document.getElementById("brokerBtn");
+        const output = document.getElementById("output");
+        const sent = document.getElementById("payload");
+        const received = document.getElementById("received")
+        console.log("hello world");
+        brokerBtn.addEventListener("click",function(e){
+            console.log("btn clicked");
+            e.preventDefault();
+            const body= {
+                method: "POST"
+            }
+            fetch("http:\/\/localhost:8080",body)
+            .then(resp=>resp.json())
+            .then(data=>{
+                sent.innerHTML = "Send empty Post";
+                received.innerHTML = JSON.stringify(data,undefined,4);
+                if (data.error){
+                    output.innerHTML += "<br><br>Error :" + data.error
+                }else {
+                    output.innerHTML += `<br><strong>Response form the broker service : ${data.message}` 
+                }
+            })
+            .catch((error) => {
+                    output.innerHTML += "<br><br>Error :" + error
+            })
+        })
     </script>
 {{end}}
