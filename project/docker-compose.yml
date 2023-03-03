@@ -13,7 +13,7 @@ services:
       mode: replicated
       replicas: 1
 
-  authe-service:
+  auth-service:
     build:
       context: ./../auth-service
       dockerfile: ./../auth-service/auth-service.dockerfile

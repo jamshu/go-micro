@@ -1,3 +1,5 @@
 .DS_store
 workspace.code-workspace
 project/db-data/postgres/
+auth-service/authApp
+broker-service/brokerApp
