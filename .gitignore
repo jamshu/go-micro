@@ -1,3 +1,3 @@
 .DS_store
 workspace.code-workspace
-db-data/*
+project/db-data/postgres/*
