@@ -19,7 +19,7 @@ var count int64
 
 type Config struct {
 	DB *sql.DB
-	Data data.Models
+	Models data.Models
 }
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 
 	app := Config{
 		DB: conn ,
-		Data: data.New(conn),
+		Models: data.New(conn),
 	}
 
 
