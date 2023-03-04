@@ -14,7 +14,9 @@ import (
 
 const (
 	webPort  = "80"
-	mongoURL = "mongodb://localhost:27017"
+	rpcPort  = "5001"
+	mongoURL = "mongodb://mongo:27017"
+	gRpcPort = "50001"
 )
 
 var client *mongo.Client
@@ -24,55 +26,71 @@ type Config struct {
 }
 
 func main() {
+	// connect to mongo
 	mongoClient, err := connectToMongo()
-
 	if err != nil {
 		log.Panic(err)
 	}
 	client = mongoClient
+
+	// create a context in order to disconnect
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	// close connection
+	defer func() {
+		if err = client.Disconnect(ctx); err != nil {
+			panic(err)
+		}
+	}()
+
 	app := Config{
 		Models: data.New(client),
 	}
+
+	// start web server
+	// go app.serve()
+	log.Println("Starting service on port", webPort)
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%s", webPort),
+		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.routes(),
 	}
-	fmt.Printf("running the logger service on the port %s\n", webPort)
+
 	err = srv.ListenAndServe()
-	
 	if err != nil {
-		log.Panic(err)
+		log.Panic()
 	}
+
 }
 
+// func (app *Config) serve() {
+// 	srv := &http.Server{
+// 		Addr: fmt.Sprintf(":%s", webPort),
+// 		Handler: app.routes(),
+// 	}
+
+// 	err := srv.ListenAndServe()
+// 	if err != nil {
+// 		log.Panic()
+// 	}
+// }
+
 func connectToMongo() (*mongo.Client, error) {
-	//create connection options
+	// create connection options
 	clientOptions := options.Client().ApplyURI(mongoURL)
 	clientOptions.SetAuth(options.Credential{
 		Username: "admin",
 		Password: "password",
 	})
 
-	//connect
+	// connect
 	c, err := mongo.Connect(context.TODO(), clientOptions)
-
-	//in order to disconnect need to create context
-
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-
-	//close connection
-
-	defer func() {
-		if err = client.Disconnect(ctx); err != nil {
-			log.Panic(err)
-		}
-	}()
-
 	if err != nil {
-		log.Println("Error connecting to Mongo:", err)
+		log.Println("Error connecting:", err)
 		return nil, err
 	}
+
+	log.Println("Connected to mongo!")
 
 	return c, nil
 }
