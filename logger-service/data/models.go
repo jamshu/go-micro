@@ -127,7 +127,7 @@ func (l *LogEntry) Update() (*mongo.UpdateResult,error) {
 	defer cancel()
 
 	collection := client.Database("logs").Collection("logs")
-	doc_id,err := primitive.ObjectIDFromHex(l.id)
+	doc_id,err := primitive.ObjectIDFromHex(l.ID)
 	if err != nil {
 		log.Println(err)
 		return nil,err
