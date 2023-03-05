@@ -3,3 +3,4 @@ workspace.code-workspace
 project/db-data/*
 auth-service/authApp
 broker-service/brokerApp
+front-end/frontApp

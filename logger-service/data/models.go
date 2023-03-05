@@ -42,8 +42,8 @@ func (l *LogEntry) Insert(entry LogEntry) error {
 	_,err := collection.InsertOne(context.TODO(),LogEntry{
 		Name: entry.Name,
 		Data: entry.Data,
-		CreatedAt: entry.CreatedAt,
-		UpdatedAt: entry.UpdatedAt,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	})
 	if err != nil {
 		log.Println("Error inserting log entry to database:",err)
