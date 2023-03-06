@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"html/template"
+	"log"
 	"time"
 
 	"github.com/vanng822/go-premailer/premailer"
@@ -50,6 +51,7 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 	formattedMsg, err := m.buildHTMLMessage(msg)
 
 	if err != nil {
+		log.Printf("the error",err)
 		return err
 	}
 	plainMsg, err := m.buildPlainMessage(msg)
@@ -74,6 +76,9 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 	}
 
 	email := mail.NewMSG()
+	email.SetFrom(msg.From).
+		AddTo(msg.To).
+		SetSubject(msg.Subject)
 	email.SetBody(mail.TextPlain,plainMsg)
 	email.AddAlternative(mail.TextHTML,formattedMsg)
 

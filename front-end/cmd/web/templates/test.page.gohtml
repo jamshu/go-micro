@@ -9,6 +9,7 @@
                 <button id="brokerBtn" class="btn btn-outline-secondary">Test Broker</button>
                 <button id="authBtn" class="btn btn-outline-secondary">Test Auth</button>
                 <button id="logBtn" class="btn btn-outline-secondary">Test Log</button>
+                <button id="mailBtn" class="btn btn-outline-secondary">Test Mail</button>
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
                 </div>
@@ -37,9 +38,46 @@
         const brokerBtn = document.getElementById("brokerBtn");
         const authBtn = document.getElementById("authBtn");
         const logBtn = document.getElementById("logBtn");
+        const mailBtn = document.getElementById("mailBtn");
         const output = document.getElementById("output");
         const sent = document.getElementById("payload");
         const received = document.getElementById("received")
+
+
+        mailBtn.addEventListener("click",function(e){
+            console.log("btn clicked");
+            e.preventDefault();
+            const payload = {
+                action: "mail",
+                mail:{
+                    from:"me@example.com",
+                    to:"you@there.com",
+                    subject:"Hello, world",
+                    message:"How are you"
+                }
+            }
+            const headers = new Headers();
+            headers.set("Content-Type", "application/json");
+            const body = {
+                method : "POST",
+                headers: headers,
+                body: JSON.stringify(payload)
+            }
+            fetch("http:\/\/localhost:8080/handle",body)
+            .then(resp=>resp.json())
+            .then(data=>{
+                sent.innerHTML = JSON.stringify(payload);
+                received.innerHTML = JSON.stringify(data,undefined,4);
+                if (data.error){
+                    output.innerHTML += "<br><br>Error :" + data.error
+                }else {
+                    output.innerHTML += `<br><strong>Response form the broker service -which call the mail microservice : ${data.message}` 
+                }
+            })
+            .catch((error) => {
+                    output.innerHTML += "<br><br>Error :" + error
+            })
+        })
 
         logBtn.addEventListener("click",function(e){
             console.log("btn clicked");
